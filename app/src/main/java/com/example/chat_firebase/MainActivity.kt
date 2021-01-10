@@ -1,5 +1,6 @@
 package com.example.chat_firebase
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -15,15 +16,19 @@ import com.example.chat_firebase.Fragments.ChatsFragment
 import com.example.chat_firebase.Fragments.SearchFragment
 import com.example.chat_firebase.Fragments.SettingsFragment
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
+
 
 class MainActivity : AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar_main))
 
-        //Muda o titulo da toolbar para o nome do utilizador e mostra a foto de perfil
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = ""
@@ -38,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = viewPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -47,13 +53,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+
+        //LOGOUT BUTTON
+         when (item.itemId) {
+            R.id.action_logout -> {
+                FirebaseAuth.getInstance().signOut()
+
+                val intent = Intent(this@MainActivity,StartingActivity ::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+
+                return true
+            }
         }
+        return false
     }
 
     internal  class ViewPagerAdapter(fragmentManager: FragmentManager) :
